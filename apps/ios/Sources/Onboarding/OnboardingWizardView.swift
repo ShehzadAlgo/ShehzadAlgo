@@ -1,5 +1,5 @@
 import CoreImage
-import OpenClawKit
+import ShehzadAlgoKit
 import PhotosUI
 import SwiftUI
 import UIKit
@@ -298,7 +298,7 @@ struct OnboardingWizardView: View {
                 .font(.largeTitle.weight(.bold))
                 .padding(.bottom, 8)
 
-            Text("Connect to your OpenClaw gateway")
+            Text("Connect to your ShehzadAlgo gateway")
                 .font(.subheadline)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
@@ -536,14 +536,14 @@ struct OnboardingWizardView: View {
                         if let id = self.issue.requestId, !id.isEmpty {
                             return "Request ID: \(id)"
                         }
-                        return "Request ID: check `openclaw devices list`."
+                        return "Request ID: check `shehzadalgo devices list`."
                     }()
                     Text(
                         "Approve this device on the gateway.\n"
-                            + "1) `openclaw devices approve` (or `openclaw devices approve <requestId>`)\n"
+                            + "1) `shehzadalgo devices approve` (or `shehzadalgo devices approve <requestId>`)\n"
                             + "2) `/pair approve` in Telegram\n"
                             + "\(requestLine)\n"
-                            + "OpenClaw will also retry automatically when you return to this app.")
+                            + "ShehzadAlgo will also retry automatically when you return to this app.")
                 }
             }
 
@@ -600,7 +600,7 @@ struct OnboardingWizardView: View {
             Button {
                 self.onClose()
             } label: {
-                Text("Open OpenClaw")
+                Text("Open ShehzadAlgo")
                     .frame(maxWidth: .infinity)
             }
             .buttonStyle(.borderedProminent)
@@ -727,12 +727,12 @@ struct OnboardingWizardView: View {
                     self.manualPort = port
                     self.manualTLS = useTLS
                 case .discovered:
-                    self.manualHost = "openclaw.local"
+                    self.manualHost = "shehzadalgo.local"
                     self.manualPort = 18789
                     self.manualTLS = true
                 }
             } else {
-                self.manualHost = "openclaw.local"
+                self.manualHost = "shehzadalgo.local"
                 self.manualPort = 18789
                 self.manualTLS = true
             }
@@ -741,7 +741,7 @@ struct OnboardingWizardView: View {
         if self.selectedMode == nil {
             self.selectedMode = OnboardingStateStore.lastMode()
         }
-        if self.selectedMode == .developerLocal && self.manualHost == "openclaw.local" {
+        if self.selectedMode == .developerLocal && self.manualHost == "shehzadalgo.local" {
             self.manualHost = "localhost"
             self.manualTLS = false
         }
@@ -796,15 +796,15 @@ struct OnboardingWizardView: View {
 
     private func applyModeDefaults(_ mode: OnboardingConnectionMode) {
         let host = self.manualHost.trimmingCharacters(in: .whitespacesAndNewlines).lowercased()
-        let hostIsDefaultLike = host.isEmpty || host == "openclaw.local" || host == "localhost"
+        let hostIsDefaultLike = host.isEmpty || host == "shehzadalgo.local" || host == "localhost"
 
         switch mode {
         case .homeNetwork:
-            if hostIsDefaultLike { self.manualHost = "openclaw.local" }
+            if hostIsDefaultLike { self.manualHost = "shehzadalgo.local" }
             self.manualTLS = true
             if self.manualPort <= 0 || self.manualPort > 65535 { self.manualPort = 18789 }
         case .remoteDomain:
-            if host == "openclaw.local" || host == "localhost" { self.manualHost = "" }
+            if host == "shehzadalgo.local" || host == "localhost" { self.manualHost = "" }
             self.manualTLS = true
             if self.manualPort <= 0 || self.manualPort > 65535 { self.manualPort = 18789 }
         case .developerLocal:

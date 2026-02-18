@@ -57,6 +57,7 @@ import { normalizeBasePath, TAB_GROUPS, subtitleForTab, titleForTab } from "./na
 import { renderAgents } from "./views/agents.ts";
 import { renderChannels } from "./views/channels.ts";
 import { renderChat } from "./views/chat.ts";
+import { renderTrading } from "./views/trading.ts";
 import { renderConfig } from "./views/config.ts";
 import { renderCron } from "./views/cron.ts";
 import { renderDebug } from "./views/debug.ts";
@@ -125,10 +126,10 @@ export function renderApp(state: AppViewState) {
           </button>
           <div class="brand">
             <div class="brand-logo">
-              <img src=${basePath ? `${basePath}/favicon.svg` : "/favicon.svg"} alt="OpenClaw" />
+              <img src=${basePath ? `${basePath}/favicon.svg` : "/favicon.svg"} alt="ShehzadAlgo" />
             </div>
             <div class="brand-text">
-              <div class="brand-title">OPENCLAW</div>
+              <div class="brand-title">SHEHZADALGO</div>
               <div class="brand-sub">Gateway Dashboard</div>
             </div>
           </div>
@@ -176,7 +177,7 @@ export function renderApp(state: AppViewState) {
           <div class="nav-group__items">
             <a
               class="nav-item nav-item--external"
-              href="https://docs.openclaw.ai"
+              href="https://docs.shehzadalgo.ai"
               target="_blank"
               rel="noreferrer"
               title="${t("common.docs")} (opens in new tab)"
@@ -899,6 +900,8 @@ export function renderApp(state: AppViewState) {
                 onApply: () => applyConfig(state),
                 onUpdate: () => runUpdate(state),
               })
+            : state.tab === "trading"
+            ? renderTrading()
             : nothing
         }
 

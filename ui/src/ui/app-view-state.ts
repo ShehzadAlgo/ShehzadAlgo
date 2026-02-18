@@ -118,6 +118,11 @@ export type AppViewState = {
   whatsappBusy: boolean;
   nostrProfileFormState: NostrProfileFormState | null;
   nostrProfileAccountId: string | null;
+  trading: {
+    loading: boolean;
+    error: string | null;
+    accounts: Array<Record<string, unknown>>;
+  };
   configFormDirty: boolean;
   presenceLoading: boolean;
   presenceEntries: PresenceEntry[];

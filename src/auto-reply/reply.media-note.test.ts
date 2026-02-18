@@ -2,7 +2,7 @@ import path from "node:path";
 import { describe, expect, it, vi } from "vitest";
 import { withTempHome as withTempHomeBase } from "../../test/helpers/temp-home.js";
 import { runEmbeddedPiAgent } from "../agents/pi-embedded.js";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ShehzadAlgoConfig } from "../config/config.js";
 import { getReplyFromConfig } from "./reply.js";
 
 vi.mock("../agents/pi-embedded.js", () => ({
@@ -32,9 +32,9 @@ async function withTempHome<T>(fn: (home: string) => Promise<T>): Promise<T> {
     },
     {
       env: {
-        OPENCLAW_BUNDLED_SKILLS_DIR: (home) => path.join(home, "bundled-skills"),
+        shehzadalgo_BUNDLED_SKILLS_DIR: (home) => path.join(home, "bundled-skills"),
       },
-      prefix: "openclaw-media-note-",
+      prefix: "shehzadalgo-media-note-",
     },
   );
 }
@@ -44,12 +44,12 @@ function makeCfg(home: string) {
     agents: {
       defaults: {
         model: "anthropic/claude-opus-4-5",
-        workspace: path.join(home, "openclaw"),
+        workspace: path.join(home, "shehzadalgo"),
       },
     },
     channels: { whatsapp: { allowFrom: ["*"] } },
     session: { store: path.join(home, "sessions.json") },
-  } as unknown as OpenClawConfig;
+  } as unknown as ShehzadAlgoConfig;
 }
 
 describe("getReplyFromConfig media note plumbing", () => {

@@ -15,11 +15,19 @@ export function resolveEffectiveHomeDir(
 }
 
 function resolveRawHomeDir(env: NodeJS.ProcessEnv, homedir: () => string): string | undefined {
-  const explicitHome = normalize(env.OPENCLAW_HOME);
+  const explicitHome =
+    normalize(env.SHEHZADALGO_HOME) ??
+    normalize(env.shehzadalgo_HOME) ??
+    normalize(env.SHEHZADALGO_HOME);
   if (explicitHome) {
     if (explicitHome === "~" || explicitHome.startsWith("~/") || explicitHome.startsWith("~\\")) {
       const fallbackHome =
-        normalize(env.HOME) ?? normalize(env.USERPROFILE) ?? normalizeSafe(homedir);
+        normalize(env.HOME) ??
+        normalize(env.USERPROFILE) ??
+        normalize(env.SHEHZADALGO_HOME) ??
+        normalize(env.SHEHZADALGO_HOME) ??
+        normalize(env.shehzadalgo_HOME) ??
+        normalizeSafe(homedir);
       if (fallbackHome) {
         return explicitHome.replace(/^~(?=$|[\\/])/, fallbackHome);
       }

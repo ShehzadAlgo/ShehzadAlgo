@@ -1,6 +1,6 @@
-import OpenClawKit
+import ShehzadAlgoKit
 import Testing
-@testable import OpenClaw
+@testable import ShehzadAlgo
 
 @Suite struct IOSGatewayChatTransportTests {
     @Test func requestsFailFastWhenGatewayNotConnected() async {

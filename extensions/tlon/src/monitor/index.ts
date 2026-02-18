@@ -1,6 +1,6 @@
 import { format } from "node:util";
-import type { RuntimeEnv, ReplyPayload, OpenClawConfig } from "openclaw/plugin-sdk";
-import { createReplyPrefixOptions } from "openclaw/plugin-sdk";
+import type { RuntimeEnv, ReplyPayload, ShehzadAlgoConfig } from "shehzadalgo/plugin-sdk";
+import { createReplyPrefixOptions } from "shehzadalgo/plugin-sdk";
 import { getTlonRuntime } from "../runtime.js";
 import { normalizeShip, parseChannelNest } from "../targets.js";
 import { resolveTlonAccount } from "../types.js";
@@ -64,7 +64,7 @@ type UrbitUpdate = {
 };
 
 function resolveChannelAuthorization(
-  cfg: OpenClawConfig,
+  cfg: ShehzadAlgoConfig,
   channelNest: string,
 ): { mode: "restricted" | "open"; allowedShips: string[] } {
   const tlonConfig = cfg.channels?.tlon as

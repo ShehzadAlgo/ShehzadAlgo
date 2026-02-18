@@ -1,3 +1,4 @@
+/// <reference path="./types.d.ts" />
 import { playwright } from "@vitest/browser-playwright";
 import { defineConfig } from "vitest/config";
 

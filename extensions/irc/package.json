@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/irc",
+  "name": "@shehzadalgo/irc",
   "version": "2026.2.17",
-  "description": "OpenClaw IRC channel plugin",
+  "description": "ShehzadAlgo IRC channel plugin",
   "type": "module",
   "devDependencies": {
-    "openclaw": "workspace:*"
+    "shehzadalgo": "workspace:*"
   },
-  "openclaw": {
+  "shehzadalgo": {
     "extensions": [
       "./index.ts"
     ]

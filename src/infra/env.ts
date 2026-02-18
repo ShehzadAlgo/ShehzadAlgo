@@ -43,10 +43,26 @@ export function normalizeZaiEnv(): void {
   }
 }
 
+function copyPrefixedEnv(srcPrefix: string, destPrefix: string): void {
+  for (const key of Object.keys(process.env)) {
+    if (!key.startsWith(srcPrefix)) {continue;}
+    const suffix = key.slice(srcPrefix.length);
+    const destKey = `${destPrefix}${suffix}`;
+    if (!process.env[destKey]) {
+      process.env[destKey] = process.env[key];
+    }
+  }
+}
+
 export function isTruthyEnvValue(value?: string): boolean {
   return parseBooleanValue(value) === true;
 }
 
 export function normalizeEnv(): void {
   normalizeZaiEnv();
+  // Branding migration: prefer SHEHZADALGO_*, but keep SHEHZADALGO_* working.
+  copyPrefixedEnv("SHEHZADALGO_", "shehzadalgo_");
+  copyPrefixedEnv("SHEHZADALGO_", "shehzadalgo_");
+  // Mirror lower-case to upper-case so downstream tools logging uppercase find it.
+  copyPrefixedEnv("shehzadalgo_", "SHEHZADALGO_");
 }

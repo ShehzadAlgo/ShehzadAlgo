@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/tlon",
+  "name": "@shehzadalgo/tlon",
   "version": "2026.2.17",
   "private": true,
-  "description": "OpenClaw Tlon/Urbit channel plugin",
+  "description": "ShehzadAlgo Tlon/Urbit channel plugin",
   "type": "module",
   "dependencies": {
     "@urbit/aura": "^3.0.0"
   },
   "devDependencies": {
-    "openclaw": "workspace:*"
+    "shehzadalgo": "workspace:*"
   },
-  "openclaw": {
+  "shehzadalgo": {
     "extensions": [
       "./index.ts"
     ],
@@ -25,7 +25,7 @@
       "quickstartAllowFrom": true
     },
     "install": {
-      "npmSpec": "@openclaw/tlon",
+      "npmSpec": "@shehzadalgo/tlon",
       "localPath": "extensions/tlon",
       "defaultChoice": "npm"
     }

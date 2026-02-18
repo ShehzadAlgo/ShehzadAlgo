@@ -2,7 +2,7 @@ import fs from "node:fs/promises";
 import os from "node:os";
 import path from "node:path";
 import { afterAll, beforeAll, beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig, ConfigFileSnapshot } from "../config/types.openclaw.js";
+import type { ShehzadAlgoConfig, ConfigFileSnapshot } from "../config/types.shehzadalgo.js";
 import type { UpdateRunResult } from "../infra/update-runner.js";
 import { captureEnv } from "../test-utils/env.js";
 
@@ -30,8 +30,8 @@ vi.mock("../infra/update-runner.js", () => ({
   runGatewayUpdate: vi.fn(),
 }));
 
-vi.mock("../infra/openclaw-root.js", () => ({
-  resolveOpenClawPackageRoot: vi.fn(),
+vi.mock("../infra/shehzadalgo-root.js", () => ({
+  resolveShehzadAlgoPackageRoot: vi.fn(),
 }));
 
 vi.mock("../config/config.js", () => ({
@@ -108,7 +108,7 @@ vi.mock("../runtime.js", () => ({
 }));
 
 const { runGatewayUpdate } = await import("../infra/update-runner.js");
-const { resolveOpenClawPackageRoot } = await import("../infra/openclaw-root.js");
+const { resolveShehzadAlgoPackageRoot } = await import("../infra/shehzadalgo-root.js");
 const { readConfigFileSnapshot, writeConfigFile } = await import("../config/config.js");
 const { checkUpdateStatus, fetchNpmTagVersion, resolveNpmChannelTag } =
   await import("../infra/update-check.js");
@@ -130,16 +130,16 @@ describe("update-cli", () => {
   };
 
   beforeAll(async () => {
-    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-update-tests-"));
+    fixtureRoot = await fs.mkdtemp(path.join(os.tmpdir(), "shehzadalgo-update-tests-"));
   });
 
   afterAll(async () => {
     await fs.rm(fixtureRoot, { recursive: true, force: true });
   });
 
-  const baseConfig = {} as OpenClawConfig;
+  const baseConfig = {} as ShehzadAlgoConfig;
   const baseSnapshot: ConfigFileSnapshot = {
-    path: "/tmp/openclaw-config.json",
+    path: "/tmp/shehzadalgo-config.json",
     exists: true,
     raw: "{}",
     parsed: {},
@@ -166,11 +166,11 @@ describe("update-cli", () => {
   };
 
   const setupNonInteractiveDowngrade = async () => {
-    const tempDir = await createCaseDir("openclaw-update");
+    const tempDir = await createCaseDir("shehzadalgo-update");
     setTty(false);
     readPackageVersion.mockResolvedValue("2.0.0");
 
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue(tempDir);
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockResolvedValue(tempDir);
     vi.mocked(checkUpdateStatus).mockResolvedValue({
       root: tempDir,
       installKind: "package",
@@ -202,7 +202,7 @@ describe("update-cli", () => {
     confirm.mockReset();
     select.mockReset();
     vi.mocked(runGatewayUpdate).mockReset();
-    vi.mocked(resolveOpenClawPackageRoot).mockReset();
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockReset();
     vi.mocked(readConfigFileSnapshot).mockReset();
     vi.mocked(writeConfigFile).mockReset();
     vi.mocked(checkUpdateStatus).mockReset();
@@ -220,7 +220,7 @@ describe("update-cli", () => {
     serviceLoaded.mockReset();
     prepareRestartScript.mockReset();
     runRestartScript.mockReset();
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue(process.cwd());
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockResolvedValue(process.cwd());
     vi.mocked(readConfigFileSnapshot).mockResolvedValue(baseSnapshot);
     vi.mocked(fetchNpmTagVersion).mockResolvedValue({
       tag: "latest",
@@ -263,11 +263,11 @@ describe("update-cli", () => {
       killed: false,
       termination: "exit",
     });
-    readPackageName.mockResolvedValue("openclaw");
+    readPackageName.mockResolvedValue("shehzadalgo");
     readPackageVersion.mockResolvedValue("1.0.0");
     resolveGlobalManager.mockResolvedValue("npm");
     serviceLoaded.mockResolvedValue(false);
-    prepareRestartScript.mockResolvedValue("/tmp/openclaw-restart-test.sh");
+    prepareRestartScript.mockResolvedValue("/tmp/shehzadalgo-restart-test.sh");
     runRestartScript.mockResolvedValue(undefined);
     setTty(false);
     setStdoutTty(false);
@@ -310,7 +310,7 @@ describe("update-cli", () => {
     await updateStatusCommand({ json: false });
 
     const logs = vi.mocked(defaultRuntime.log).mock.calls.map((call) => call[0]);
-    expect(logs.join("\n")).toContain("OpenClaw update status");
+    expect(logs.join("\n")).toContain("ShehzadAlgo update status");
   });
 
   it("updateStatusCommand emits JSON", async () => {
@@ -337,9 +337,9 @@ describe("update-cli", () => {
   });
 
   it("defaults to stable channel for package installs when unset", async () => {
-    const tempDir = await createCaseDir("openclaw-update");
+    const tempDir = await createCaseDir("shehzadalgo-update");
 
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue(tempDir);
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockResolvedValue(tempDir);
     vi.mocked(checkUpdateStatus).mockResolvedValue({
       root: tempDir,
       installKind: "package",
@@ -368,7 +368,7 @@ describe("update-cli", () => {
   it("uses stored beta channel when configured", async () => {
     vi.mocked(readConfigFileSnapshot).mockResolvedValue({
       ...baseSnapshot,
-      config: { update: { channel: "beta" } } as OpenClawConfig,
+      config: { update: { channel: "beta" } } as ShehzadAlgoConfig,
     });
     vi.mocked(runGatewayUpdate).mockResolvedValue({
       status: "ok",
@@ -384,12 +384,12 @@ describe("update-cli", () => {
   });
 
   it("falls back to latest when beta tag is older than release", async () => {
-    const tempDir = await createCaseDir("openclaw-update");
+    const tempDir = await createCaseDir("shehzadalgo-update");
 
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue(tempDir);
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockResolvedValue(tempDir);
     vi.mocked(readConfigFileSnapshot).mockResolvedValue({
       ...baseSnapshot,
-      config: { update: { channel: "beta" } } as OpenClawConfig,
+      config: { update: { channel: "beta" } } as ShehzadAlgoConfig,
     });
     vi.mocked(checkUpdateStatus).mockResolvedValue({
       root: tempDir,
@@ -421,9 +421,9 @@ describe("update-cli", () => {
   });
 
   it("honors --tag override", async () => {
-    const tempDir = await createCaseDir("openclaw-update");
+    const tempDir = await createCaseDir("shehzadalgo-update");
 
-    vi.mocked(resolveOpenClawPackageRoot).mockResolvedValue(tempDir);
+    vi.mocked(resolveShehzadAlgoPackageRoot).mockResolvedValue(tempDir);
     vi.mocked(runGatewayUpdate).mockResolvedValue({
       status: "ok",
       mode: "npm",
@@ -503,10 +503,10 @@ describe("update-cli", () => {
       durationMs: 100,
     };
 
-    const envSnapshot = captureEnv(["OPENCLAW_UPDATE_IN_PROGRESS"]);
+    const envSnapshot = captureEnv(["shehzadalgo_UPDATE_IN_PROGRESS"]);
     const randomSpy = vi.spyOn(Math, "random").mockReturnValue(0);
     try {
-      delete process.env.OPENCLAW_UPDATE_IN_PROGRESS;
+      delete process.env.shehzadalgo_UPDATE_IN_PROGRESS;
       vi.mocked(runGatewayUpdate).mockResolvedValue(mockResult);
       vi.mocked(runDaemonRestart).mockResolvedValue(true);
       vi.mocked(doctorCommand).mockResolvedValue(undefined);
@@ -518,7 +518,7 @@ describe("update-cli", () => {
         defaultRuntime,
         expect.objectContaining({ nonInteractive: true }),
       );
-      expect(process.env.OPENCLAW_UPDATE_IN_PROGRESS).toBeUndefined();
+      expect(process.env.shehzadalgo_UPDATE_IN_PROGRESS).toBeUndefined();
 
       const logLines = vi.mocked(defaultRuntime.log).mock.calls.map((call) => String(call[0]));
       expect(
@@ -628,11 +628,11 @@ describe("update-cli", () => {
   });
 
   it("updateWizardCommand offers dev checkout and forwards selections", async () => {
-    const tempDir = await createCaseDir("openclaw-update-wizard");
-    const envSnapshot = captureEnv(["OPENCLAW_GIT_DIR"]);
+    const tempDir = await createCaseDir("shehzadalgo-update-wizard");
+    const envSnapshot = captureEnv(["shehzadalgo_GIT_DIR"]);
     try {
       setTty(true);
-      process.env.OPENCLAW_GIT_DIR = tempDir;
+      process.env.shehzadalgo_GIT_DIR = tempDir;
 
       vi.mocked(checkUpdateStatus).mockResolvedValue({
         root: "/test/path",

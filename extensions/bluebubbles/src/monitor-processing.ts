@@ -1,4 +1,4 @@
-import type { OpenClawConfig } from "openclaw/plugin-sdk";
+import type { ShehzadAlgoConfig } from "shehzadalgo/plugin-sdk";
 import {
   createReplyPrefixOptions,
   logAckFailure,
@@ -7,7 +7,7 @@ import {
   resolveAckReaction,
   resolveControlCommandGate,
   stripMarkdown,
-} from "openclaw/plugin-sdk";
+} from "shehzadalgo/plugin-sdk";
 import { downloadBlueBubblesAttachment } from "./attachments.js";
 import { markBlueBubblesChatRead, sendBlueBubblesTyping } from "./chat.js";
 import { sendBlueBubblesMedia } from "./media-send.js";
@@ -211,7 +211,7 @@ function logGroupAllowlistHint(params: {
 }
 
 function resolveBlueBubblesAckReaction(params: {
-  cfg: OpenClawConfig;
+  cfg: ShehzadAlgoConfig;
   agentId: string;
   core: BlueBubblesCoreRuntime;
   runtime: BlueBubblesRuntimeEnv;

@@ -7,9 +7,11 @@ export function buildControlUiCspHeader(): string {
     "object-src 'none'",
     "frame-ancestors 'none'",
     "script-src 'self'",
-    "style-src 'self' 'unsafe-inline'",
+    // Allow Google Fonts CSS and inline styles used by templates.
+    "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
     "img-src 'self' data: https:",
-    "font-src 'self'",
+    // Allow fetching font binaries from Google font CDN.
+    "font-src 'self' https://fonts.gstatic.com data:",
     "connect-src 'self' ws: wss:",
   ].join("; ");
 }

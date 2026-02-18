@@ -86,7 +86,7 @@ jobs:
             case "$path" in
               # Generated protocol models are already covered by protocol:check and
               # should not force the full native macOS lane.
-              apps/macos/Sources/OpenClawProtocol/*|apps/shared/OpenClawKit/Sources/OpenClawProtocol/*)
+              apps/macos/Sources/ShehzadAlgoProtocol/*|apps/shared/ShehzadAlgoKit/Sources/ShehzadAlgoProtocol/*)
                 ;;
               apps/macos/*|apps/ios/*|apps/shared/*|Swabble/*)
                 run_macos=true
@@ -100,7 +100,7 @@ jobs:
             esac
 
             case "$path" in
-              src/*|test/*|extensions/*|packages/*|scripts/*|ui/*|.github/*|openclaw.mjs|package.json|pnpm-lock.yaml|pnpm-workspace.yaml|tsconfig*.json|vitest*.ts|tsdown.config.ts|.oxlintrc.json|.oxfmtrc.jsonc)
+              src/*|test/*|extensions/*|packages/*|scripts/*|ui/*|.github/*|shehzadalgo.mjs|package.json|pnpm-lock.yaml|pnpm-workspace.yaml|tsconfig*.json|vitest*.ts|tsdown.config.ts|.oxlintrc.json|.oxfmtrc.jsonc)
                 run_node=true
                 ;;
             esac
@@ -202,15 +202,15 @@ jobs:
 
       - name: Configure vitest JSON reports
         if: matrix.task == 'test' && matrix.runtime == 'node'
-        run: echo "OPENCLAW_VITEST_REPORT_DIR=$RUNNER_TEMP/vitest-reports" >> "$GITHUB_ENV"
+        run: echo "SHEHZADALGO_VITEST_REPORT_DIR=$RUNNER_TEMP/vitest-reports" >> "$GITHUB_ENV"
 
       - name: Configure Node test resources
         if: matrix.task == 'test' && matrix.runtime == 'node'
         run: |
           # `pnpm test` runs `scripts/test-parallel.mjs`, which spawns multiple Node processes.
           # Default heap limits have been too low on Linux CI (V8 OOM near 4GB).
-          echo "OPENCLAW_TEST_WORKERS=2" >> "$GITHUB_ENV"
-          echo "OPENCLAW_TEST_MAX_OLD_SPACE_SIZE_MB=6144" >> "$GITHUB_ENV"
+          echo "SHEHZADALGO_TEST_WORKERS=2" >> "$GITHUB_ENV"
+          echo "SHEHZADALGO_TEST_MAX_OLD_SPACE_SIZE_MB=6144" >> "$GITHUB_ENV"
 
       - name: Run ${{ matrix.task }} (${{ matrix.runtime }})
         run: ${{ matrix.command }}
@@ -218,7 +218,7 @@ jobs:
       - name: Summarize slowest tests
         if: matrix.task == 'test' && matrix.runtime == 'node'
         run: |
-          node scripts/vitest-slowest.mjs --dir "$OPENCLAW_VITEST_REPORT_DIR" --top 50 --out "$RUNNER_TEMP/vitest-slowest.md" > /dev/null
+          node scripts/vitest-slowest.mjs --dir "$SHEHZADALGO_VITEST_REPORT_DIR" --top 50 --out "$RUNNER_TEMP/vitest-slowest.md" > /dev/null
           echo "Slowest test summary written to $RUNNER_TEMP/vitest-slowest.md"
 
       - name: Upload vitest reports
@@ -227,8 +227,57 @@ jobs:
         with:
           name: vitest-reports-${{ runner.os }}-${{ matrix.runtime }}
           path: |
-            ${{ env.OPENCLAW_VITEST_REPORT_DIR }}
+            ${{ env.SHEHZADALGO_VITEST_REPORT_DIR }}
             ${{ runner.temp }}/vitest-slowest.md
+
+  # Explicit small job to pin critical unit tests for volume-profile so
+  # regressions in this feature are caught even if broader test selection
+  # heuristics change. Runs whenever Node tests are enabled.
+  volume-profile-tests:
+    needs: [docs-scope, changed-scope, check]
+    if: needs.docs-scope.outputs.docs_only != 'true' && (github.event_name == 'push' || needs.changed-scope.outputs.run_node == 'true')
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node environment
+        uses: ./.github/actions/setup-node-env
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: pnpm install --frozen-lockfile --ignore-scripts=false --config.engine-strict=false --config.enable-pre-post-scripts=true || pnpm install --frozen-lockfile --ignore-scripts=false --config.engine-strict=false --config.enable-pre-post-scripts=true
+
+      - name: Run volume-profile unit tests
+        run: pnpm exec vitest run src/infra/strategy/features/volume-profile.test.ts src/infra/strategy/features/volume-profile.edge.test.ts
+
+  # Latency regression benchmark: measure these critical tests and fail if
+  # execution time exceeds the configured threshold.
+  latency-benchmark:
+    needs: [volume-profile-tests]
+    if: needs.docs-scope.outputs.docs_only != 'true' && (github.event_name == 'push' || needs.changed-scope.outputs.run_node == 'true')
+    runs-on: blacksmith-4vcpu-ubuntu-2404
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          submodules: false
+
+      - name: Setup Node environment
+        uses: ./.github/actions/setup-node-env
+
+      - name: Install dependencies
+        env:
+          CI: true
+        run: pnpm install --frozen-lockfile --ignore-scripts=false --config.engine-strict=false --config.enable-pre-post-scripts=true || pnpm install --frozen-lockfile --ignore-scripts=false --config.engine-strict=false --config.enable-pre-post-scripts=true
+
+      - name: Run latency benchmark
+        env:
+          SHEHZADALGO_LATENCY_THRESHOLD_MS: 5000
+        run: node scripts/latency-benchmark.mjs
 
   # Types, lint, and format check.
   check:
@@ -298,7 +347,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       # Keep total concurrency predictable on the 4 vCPU runner:
       # `scripts/test-parallel.mjs` runs some vitest suites in parallel processes.
-      OPENCLAW_TEST_WORKERS: 2
+      SHEHZADALGO_TEST_WORKERS: 2
     defaults:
       run:
         shell: bash
@@ -393,7 +442,7 @@ jobs:
 
       - name: Configure vitest JSON reports
         if: matrix.task == 'test'
-        run: echo "OPENCLAW_VITEST_REPORT_DIR=$RUNNER_TEMP/vitest-reports" >> "$GITHUB_ENV"
+        run: echo "SHEHZADALGO_VITEST_REPORT_DIR=$RUNNER_TEMP/vitest-reports" >> "$GITHUB_ENV"
 
       - name: Run ${{ matrix.task }} (${{ matrix.runtime }})
         run: ${{ matrix.command }}
@@ -401,7 +450,7 @@ jobs:
       - name: Summarize slowest tests
         if: matrix.task == 'test'
         run: |
-          node scripts/vitest-slowest.mjs --dir "$OPENCLAW_VITEST_REPORT_DIR" --top 50 --out "$RUNNER_TEMP/vitest-slowest.md" > /dev/null
+          node scripts/vitest-slowest.mjs --dir "$SHEHZADALGO_VITEST_REPORT_DIR" --top 50 --out "$RUNNER_TEMP/vitest-slowest.md" > /dev/null
           echo "Slowest test summary written to $RUNNER_TEMP/vitest-slowest.md"
 
       - name: Upload vitest reports
@@ -410,7 +459,7 @@ jobs:
         with:
           name: vitest-reports-${{ runner.os }}-${{ matrix.runtime }}
           path: |
-            ${{ env.OPENCLAW_VITEST_REPORT_DIR }}
+            ${{ env.SHEHZADALGO_VITEST_REPORT_DIR }}
             ${{ runner.temp }}/vitest-slowest.md
 
   # Consolidated macOS job: runs TS tests + Swift lint/build/test sequentially

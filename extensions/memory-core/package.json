@@ -1,16 +1,16 @@
 {
-  "name": "@openclaw/memory-core",
+  "name": "@shehzadalgo/memory-core",
   "version": "2026.2.17",
   "private": true,
-  "description": "OpenClaw core memory search plugin",
+  "description": "ShehzadAlgo core memory search plugin",
   "type": "module",
   "devDependencies": {
-    "openclaw": "workspace:*"
+    "shehzadalgo": "workspace:*"
   },
   "peerDependencies": {
-    "openclaw": ">=2026.1.26"
+    "shehzadalgo": ">=2026.1.26"
   },
-  "openclaw": {
+  "shehzadalgo": {
     "extensions": [
       "./index.ts"
     ]

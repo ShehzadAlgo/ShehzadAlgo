@@ -7,7 +7,7 @@ describe("parseCliProfileArgs", () => {
   it("leaves gateway --dev for subcommands", () => {
     const res = parseCliProfileArgs([
       "node",
-      "openclaw",
+      "shehzadalgo",
       "gateway",
       "--dev",
       "--allow-unconfigured",
@@ -16,39 +16,39 @@ describe("parseCliProfileArgs", () => {
       throw new Error(res.error);
     }
     expect(res.profile).toBeNull();
-    expect(res.argv).toEqual(["node", "openclaw", "gateway", "--dev", "--allow-unconfigured"]);
+    expect(res.argv).toEqual(["node", "shehzadalgo", "gateway", "--dev", "--allow-unconfigured"]);
   });
 
   it("still accepts global --dev before subcommand", () => {
-    const res = parseCliProfileArgs(["node", "openclaw", "--dev", "gateway"]);
+    const res = parseCliProfileArgs(["node", "shehzadalgo", "--dev", "gateway"]);
     if (!res.ok) {
       throw new Error(res.error);
     }
     expect(res.profile).toBe("dev");
-    expect(res.argv).toEqual(["node", "openclaw", "gateway"]);
+    expect(res.argv).toEqual(["node", "shehzadalgo", "gateway"]);
   });
 
   it("parses --profile value and strips it", () => {
-    const res = parseCliProfileArgs(["node", "openclaw", "--profile", "work", "status"]);
+    const res = parseCliProfileArgs(["node", "shehzadalgo", "--profile", "work", "status"]);
     if (!res.ok) {
       throw new Error(res.error);
     }
     expect(res.profile).toBe("work");
-    expect(res.argv).toEqual(["node", "openclaw", "status"]);
+    expect(res.argv).toEqual(["node", "shehzadalgo", "status"]);
   });
 
   it("rejects missing profile value", () => {
-    const res = parseCliProfileArgs(["node", "openclaw", "--profile"]);
+    const res = parseCliProfileArgs(["node", "shehzadalgo", "--profile"]);
     expect(res.ok).toBe(false);
   });
 
   it("rejects combining --dev with --profile (dev first)", () => {
-    const res = parseCliProfileArgs(["node", "openclaw", "--dev", "--profile", "work", "status"]);
+    const res = parseCliProfileArgs(["node", "shehzadalgo", "--dev", "--profile", "work", "status"]);
     expect(res.ok).toBe(false);
   });
 
   it("rejects combining --dev with --profile (profile first)", () => {
-    const res = parseCliProfileArgs(["node", "openclaw", "--profile", "work", "--dev", "status"]);
+    const res = parseCliProfileArgs(["node", "shehzadalgo", "--profile", "work", "--dev", "status"]);
     expect(res.ok).toBe(false);
   });
 });
@@ -61,31 +61,31 @@ describe("applyCliProfileEnv", () => {
       env,
       homedir: () => "/home/peter",
     });
-    const expectedStateDir = path.join(path.resolve("/home/peter"), ".openclaw-dev");
-    expect(env.OPENCLAW_PROFILE).toBe("dev");
-    expect(env.OPENCLAW_STATE_DIR).toBe(expectedStateDir);
-    expect(env.OPENCLAW_CONFIG_PATH).toBe(path.join(expectedStateDir, "openclaw.json"));
-    expect(env.OPENCLAW_GATEWAY_PORT).toBe("19001");
+    const expectedStateDir = path.join(path.resolve("/home/peter"), ".shehzadalgo-dev");
+    expect(env.shehzadalgo_PROFILE).toBe("dev");
+    expect(env.shehzadalgo_STATE_DIR).toBe(expectedStateDir);
+    expect(env.shehzadalgo_CONFIG_PATH).toBe(path.join(expectedStateDir, "shehzadalgo.json"));
+    expect(env.shehzadalgo_GATEWAY_PORT).toBe("19001");
   });
 
   it("does not override explicit env values", () => {
     const env: Record<string, string | undefined> = {
-      OPENCLAW_STATE_DIR: "/custom",
-      OPENCLAW_GATEWAY_PORT: "19099",
+      shehzadalgo_STATE_DIR: "/custom",
+      shehzadalgo_GATEWAY_PORT: "19099",
     };
     applyCliProfileEnv({
       profile: "dev",
       env,
       homedir: () => "/home/peter",
     });
-    expect(env.OPENCLAW_STATE_DIR).toBe("/custom");
-    expect(env.OPENCLAW_GATEWAY_PORT).toBe("19099");
-    expect(env.OPENCLAW_CONFIG_PATH).toBe(path.join("/custom", "openclaw.json"));
+    expect(env.shehzadalgo_STATE_DIR).toBe("/custom");
+    expect(env.shehzadalgo_GATEWAY_PORT).toBe("19099");
+    expect(env.shehzadalgo_CONFIG_PATH).toBe(path.join("/custom", "shehzadalgo.json"));
   });
 
-  it("uses OPENCLAW_HOME when deriving profile state dir", () => {
+  it("uses shehzadalgo_HOME when deriving profile state dir", () => {
     const env: Record<string, string | undefined> = {
-      OPENCLAW_HOME: "/srv/openclaw-home",
+      shehzadalgo_HOME: "/srv/shehzadalgo-home",
       HOME: "/home/other",
     };
     applyCliProfileEnv({
@@ -94,70 +94,70 @@ describe("applyCliProfileEnv", () => {
       homedir: () => "/home/fallback",
     });
 
-    const resolvedHome = path.resolve("/srv/openclaw-home");
-    expect(env.OPENCLAW_STATE_DIR).toBe(path.join(resolvedHome, ".openclaw-work"));
-    expect(env.OPENCLAW_CONFIG_PATH).toBe(
-      path.join(resolvedHome, ".openclaw-work", "openclaw.json"),
+    const resolvedHome = path.resolve("/srv/shehzadalgo-home");
+    expect(env.shehzadalgo_STATE_DIR).toBe(path.join(resolvedHome, ".shehzadalgo-work"));
+    expect(env.shehzadalgo_CONFIG_PATH).toBe(
+      path.join(resolvedHome, ".shehzadalgo-work", "shehzadalgo.json"),
     );
   });
 });
 
 describe("formatCliCommand", () => {
   it("returns command unchanged when no profile is set", () => {
-    expect(formatCliCommand("openclaw doctor --fix", {})).toBe("openclaw doctor --fix");
+    expect(formatCliCommand("shehzadalgo doctor --fix", {})).toBe("shehzadalgo doctor --fix");
   });
 
   it("returns command unchanged when profile is default", () => {
-    expect(formatCliCommand("openclaw doctor --fix", { OPENCLAW_PROFILE: "default" })).toBe(
-      "openclaw doctor --fix",
+    expect(formatCliCommand("shehzadalgo doctor --fix", { shehzadalgo_PROFILE: "default" })).toBe(
+      "shehzadalgo doctor --fix",
     );
   });
 
   it("returns command unchanged when profile is Default (case-insensitive)", () => {
-    expect(formatCliCommand("openclaw doctor --fix", { OPENCLAW_PROFILE: "Default" })).toBe(
-      "openclaw doctor --fix",
+    expect(formatCliCommand("shehzadalgo doctor --fix", { shehzadalgo_PROFILE: "Default" })).toBe(
+      "shehzadalgo doctor --fix",
     );
   });
 
   it("returns command unchanged when profile is invalid", () => {
-    expect(formatCliCommand("openclaw doctor --fix", { OPENCLAW_PROFILE: "bad profile" })).toBe(
-      "openclaw doctor --fix",
+    expect(formatCliCommand("shehzadalgo doctor --fix", { shehzadalgo_PROFILE: "bad profile" })).toBe(
+      "shehzadalgo doctor --fix",
     );
   });
 
   it("returns command unchanged when --profile is already present", () => {
     expect(
-      formatCliCommand("openclaw --profile work doctor --fix", { OPENCLAW_PROFILE: "work" }),
-    ).toBe("openclaw --profile work doctor --fix");
+      formatCliCommand("shehzadalgo --profile work doctor --fix", { shehzadalgo_PROFILE: "work" }),
+    ).toBe("shehzadalgo --profile work doctor --fix");
   });
 
   it("returns command unchanged when --dev is already present", () => {
-    expect(formatCliCommand("openclaw --dev doctor", { OPENCLAW_PROFILE: "dev" })).toBe(
-      "openclaw --dev doctor",
+    expect(formatCliCommand("shehzadalgo --dev doctor", { shehzadalgo_PROFILE: "dev" })).toBe(
+      "shehzadalgo --dev doctor",
     );
   });
 
   it("inserts --profile flag when profile is set", () => {
-    expect(formatCliCommand("openclaw doctor --fix", { OPENCLAW_PROFILE: "work" })).toBe(
-      "openclaw --profile work doctor --fix",
+    expect(formatCliCommand("shehzadalgo doctor --fix", { shehzadalgo_PROFILE: "work" })).toBe(
+      "shehzadalgo --profile work doctor --fix",
     );
   });
 
   it("trims whitespace from profile", () => {
-    expect(formatCliCommand("openclaw doctor --fix", { OPENCLAW_PROFILE: "  jbopenclaw  " })).toBe(
-      "openclaw --profile jbopenclaw doctor --fix",
+    expect(formatCliCommand("shehzadalgo doctor --fix", { shehzadalgo_PROFILE: "  jbshehzadalgo  " })).toBe(
+      "shehzadalgo --profile jbshehzadalgo doctor --fix",
     );
   });
 
-  it("handles command with no args after openclaw", () => {
-    expect(formatCliCommand("openclaw", { OPENCLAW_PROFILE: "test" })).toBe(
-      "openclaw --profile test",
+  it("handles command with no args after shehzadalgo", () => {
+    expect(formatCliCommand("shehzadalgo", { shehzadalgo_PROFILE: "test" })).toBe(
+      "shehzadalgo --profile test",
     );
   });
 
   it("handles pnpm wrapper", () => {
-    expect(formatCliCommand("pnpm openclaw doctor", { OPENCLAW_PROFILE: "work" })).toBe(
-      "pnpm openclaw --profile work doctor",
+    expect(formatCliCommand("pnpm shehzadalgo doctor", { shehzadalgo_PROFILE: "work" })).toBe(
+      "pnpm shehzadalgo --profile work doctor",
     );
   });
 });

@@ -19,7 +19,7 @@ function normalizeBase(input: string): string {
 }
 
 export default defineConfig(() => {
-  const envBase = process.env.OPENCLAW_CONTROL_UI_BASE_PATH?.trim();
+  const envBase = process.env.SHEHZADALGO_CONTROL_UI_BASE_PATH?.trim();
   const base = envBase ? normalizeBase(envBase) : "./";
   return {
     base,
@@ -28,6 +28,7 @@ export default defineConfig(() => {
       include: ["lit/directives/repeat.js"],
     },
     build: {
+    chunkSizeWarningLimit: 1000,
       outDir: path.resolve(here, "../dist/control-ui"),
       emptyOutDir: true,
       sourcemap: true,
