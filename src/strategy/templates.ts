@@ -5,7 +5,7 @@ export interface StrategyTemplate {
   name: string;
   description: string;
   assetClasses: AssetClass[];
-  baseSpec: Omit<StrategySpec, "rules" | "risk" | "risk"> & {
+  baseSpec: Omit<StrategySpec, "rules" | "risk"> & {
     rules: StrategySpec["rules"];
     risk: StrategySpec["risk"];
   };
@@ -54,7 +54,9 @@ export const templates: StrategyTemplate[] = [
       rules: {
         entries: [{ indicator: "poc-shift", operands: ["poc", "poc_prev"], comparator: "gt" }],
         exits: [{ indicator: "poc-shift", operands: ["poc", "poc_prev"], comparator: "lt" }],
-        filters: [{ indicator: "imbalance", operands: ["imbalance"], comparator: "gt", threshold: 5 }],
+        filters: [
+          { indicator: "imbalance", operands: ["imbalance"], comparator: "gt", threshold: 5 },
+        ],
       },
       risk: {
         positionSizing: "percent-equity",
@@ -76,7 +78,9 @@ export const templates: StrategyTemplate[] = [
       instrument: { symbol: "BTCUSDT", venue: "binance", assetClass: "crypto", currency: "USDT" },
       timeframe: "5m",
       rules: {
-        entries: [{ indicator: "bos", operands: ["swing"], comparator: "crossesBelow", lookback: 1 }],
+        entries: [
+          { indicator: "bos", operands: ["swing"], comparator: "crossesBelow", lookback: 1 },
+        ],
         exits: [{ indicator: "bos", operands: ["swing"], comparator: "crossesAbove", lookback: 1 }],
       },
       risk: {

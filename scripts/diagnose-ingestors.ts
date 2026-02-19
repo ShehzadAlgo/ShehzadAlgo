@@ -2,11 +2,11 @@
 // Diagnostic script to test ingest providers (Binance, Dukascopy)
 // Run with: `node --import tsx scripts/diagnose-ingestors.ts`
 
+import { runQualityChecks } from "../src/infra/strategy/ingest.ts";
 import { BinanceIngestor } from "../src/infra/strategy/ingest/binance.ts";
 import { DukascopyHttpIngestor } from "../src/infra/strategy/ingest/dukascopy-fetch.ts";
-import { runQualityChecks } from "../src/infra/strategy/ingest.ts";
 
-async function testIngestor(name: string, ingestor: any, params: any) {
+async function testIngestor(name: string, ingestor: unknown, params: unknown) {
   try {
     const res = await ingestor.fetchBars(params);
     const count = res.bars?.length ?? 0;
@@ -21,38 +21,54 @@ async function testIngestor(name: string, ingestor: any, params: any) {
       sample: res.bars?.slice(0, 3) ?? [],
     };
     // print summary (human friendly) only when not json-only
-    if (!(globalThis as any).__DIAG_JSON_ONLY__) {
+    if (!(globalThis as unknown).__DIAG_JSON_ONLY__) {
       console.log(`\n== ${name} ==`);
       console.log(`bars: ${out.count}`);
-      if (out.errors.length) console.log(`errors: ${out.errors.join("; ")}`);
-      if (out.warnings.length) console.log(`warnings: ${out.warnings.join("; ")}`);
+      if (out.errors.length) {
+        console.log(`errors: ${out.errors.join("; ")}`);
+      }
+      if (out.warnings.length) {
+        console.log(`warnings: ${out.warnings.join("; ")}`);
+      }
       if (out.count > 0) {
         console.log(`quality: ${out.quality}`);
-        if (out.issues.length) out.issues.forEach((i: any) => console.log(` - ${i.type}: ${i.description}`));
+        if (out.issues.length) {
+          out.issues.forEach((i: unknown) => console.log(` - ${i.type}: ${i.description}`));
+        }
         console.log("sample:", JSON.stringify(out.sample, null, 2));
       }
     }
     return out;
   } catch (err) {
     const msg = (err as Error).message;
-    if (!(globalThis as any).__DIAG_JSON_ONLY__) {
+    if (!(globalThis as unknown).__DIAG_JSON_ONLY__) {
       console.log(`\n== ${name} ==`);
       console.log(`exception: ${msg}`);
     }
-    return { name, count: 0, errors: [msg], warnings: [], quality: "error", issues: [], sample: [] };
+    return {
+      name,
+      count: 0,
+      errors: [msg],
+      warnings: [],
+      quality: "error",
+      issues: [],
+      sample: [],
+    };
   }
 }
 
 function parseArgs() {
   const argv = process.argv.slice(2);
-  const out: any = {};
+  const out: unknown = {};
   for (let i = 0; i < argv.length; i++) {
     const a = argv[i];
     if (a === "--help" || a === "-h") {
       out.help = true;
       break;
     }
-    if (!a.startsWith("--")) continue;
+    if (!a.startsWith("--")) {
+      continue;
+    }
     const key = a.replace(/^--/, "");
     const val = argv[i + 1] && !argv[i + 1].startsWith("--") ? argv[++i] : "true";
     out[key] = val;
@@ -77,10 +93,21 @@ Options:
 async function main() {
   const args = parseArgs();
   // set a global flag used by testIngestor to suppress human output when requested
-  (globalThis as any).__DIAG_JSON_ONLY__ = Boolean(args["json-only"] || args.jsonOnly || args.json);
-  if (args.help) { showHelp(); return; }
-  const binanceSym = (args.binanceSymbol ?? "BTCUSDT").split(",").map((s: string) => s.trim()).filter(Boolean);
-  const dukS = (args.dukascopySymbols ?? "EURUSD,XAUUSD").split(",").map((s: string) => s.trim()).filter(Boolean);
+  (globalThis as unknown).__DIAG_JSON_ONLY__ = Boolean(
+    args["json-only"] || args.jsonOnly || args.json,
+  );
+  if (args.help) {
+    showHelp();
+    return;
+  }
+  const binanceSym = (args.binanceSymbol ?? "BTCUSDT")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
+  const dukS = (args.dukascopySymbols ?? "EURUSD,XAUUSD")
+    .split(",")
+    .map((s: string) => s.trim())
+    .filter(Boolean);
   const timeframe = args.timeframe ?? "1m";
   const limit = args.limit ? Number(args.limit) : 200;
   const start = args.start ? new Date(args.start) : null;
@@ -89,7 +116,7 @@ async function main() {
   const binance = new BinanceIngestor();
   const duk = new DukascopyHttpIngestor();
 
-  const results: any[] = [];
+  const results: unknown[] = [];
 
   // Binance tests
   for (const s of binanceSym) {

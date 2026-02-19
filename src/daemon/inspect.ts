@@ -14,7 +14,7 @@ export type ExtraGatewayService = {
   label: string;
   detail: string;
   scope: "user" | "system";
-  marker?: "shehzadalgo" | "shehzadalgo" | "moltbot";
+  marker?: "shehzadalgo" | "moltbot";
   legacy?: boolean;
 };
 

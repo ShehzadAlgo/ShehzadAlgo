@@ -1,8 +1,12 @@
-import type { BacktestRequest, BacktestResult, PriceBar, StrategySpec } from "../../strategy/spec.js";
-import type { FeatureFrame } from "./features.js";
+import type {
+  BacktestRequest,
+  BacktestResult,
+  PriceBar,
+  StrategySpec,
+} from "../../strategy/spec.js";
 import { SimpleBacktester, computeMaxDrawdown, computeProfitFactor } from "./backtest.js";
+import type { FeatureFrame } from "./features.js";
 import { FilePersistence } from "./file-persistence.js";
-import { InMemoryPersistence, type Persistence } from "./persistence.js";
 
 export interface FeatureProvider {
   compute(spec: StrategySpec, bars: PriceBar[]): Promise<Record<string, FeatureFrame[]>>;
@@ -35,7 +39,9 @@ export class RuleBasedBacktester {
       // simplistic rule eval: all entry rules must pass; exits close position
       const entryOk = evaluateRules(request.spec.rules.entries, features, idx);
       const exitOk = evaluateRules(request.spec.rules.exits, features, idx);
-      const filterOk = request.spec.rules.filters ? evaluateRules(request.spec.rules.filters, features, idx) : true;
+      const filterOk = request.spec.rules.filters
+        ? evaluateRules(request.spec.rules.filters, features, idx)
+        : true;
 
       if (!position && entryOk && filterOk) {
         const size = calcPositionSize(request.spec.risk, equity, bar, features, idx);
@@ -47,7 +53,8 @@ export class RuleBasedBacktester {
         position = null;
       } else if (position) {
         // TP/SL checks
-        const changePct = ((bar.close - position.entry) / position.entry) * (position.side === "long" ? 1 : -1);
+        const changePct =
+          ((bar.close - position.entry) / position.entry) * (position.side === "long" ? 1 : -1);
         if (tpPct && changePct >= tpPct / 100) {
           const { pnl, feeCost } = computeTradePnl(position, bar.close, feesBps, slippageBps);
           equity += pnl - feeCost;
@@ -61,12 +68,13 @@ export class RuleBasedBacktester {
         }
       }
       const mtm = position
-        ? equity + (bar.close - position.entry) * position.size * (position.side === "long" ? 1 : -1)
+        ? equity +
+          (bar.close - position.entry) * position.size * (position.side === "long" ? 1 : -1)
         : equity;
       equityCurve.push(mtm);
     });
 
-    const pnl = equityCurve[equityCurve.length - 1]! - initialCapital;
+    const pnl = equityCurve[equityCurve.length - 1] - initialCapital;
     const { equityRef, tradesRef } = await this.persistence.saveBacktest({
       equity: equityCurve.map((eq, i) => ({ ts: bars[i]?.ts, equity: eq })),
       trades,
@@ -91,18 +99,24 @@ function evaluateRules(
   features: Record<string, FeatureFrame[]>,
   idx: number,
 ): boolean {
-  if (!rules?.length) {return false;}
+  if (!rules?.length) {
+    return false;
+  }
   return rules.every((rule) => {
     const series = features[rule.indicator] ?? [];
     const targetIdx = Math.max(0, idx - (rule.lookback ?? 0));
     const frame = series[targetIdx];
-    if (!frame) {return false;}
+    if (!frame) {
+      return false;
+    }
     const lhs = frame.values[rule.operands[0]];
     const rhs =
       typeof rule.threshold === "number"
         ? rule.threshold
-        : frame.values[rule.operands[1]] ?? rule.range?.[0];
-    if (lhs === undefined) {return false;}
+        : (frame.values[rule.operands[1]] ?? rule.range?.[0]);
+    if (lhs === undefined) {
+      return false;
+    }
     switch (rule.comparator) {
       case "gt":
         return lhs > rhs;
@@ -115,20 +129,28 @@ function evaluateRules(
       case "equals":
         return lhs === rhs;
       case "insideRange":
-        if (!rule.range) {return false;}
+        if (!rule.range) {
+          return false;
+        }
         return lhs >= rule.range[0] && lhs <= rule.range[1];
       case "outsideRange":
-        if (!rule.range) {return false;}
+        if (!rule.range) {
+          return false;
+        }
         return lhs < rule.range[0] || lhs > rule.range[1];
       case "crossesAbove":
       case "crossesBelow":
         // simple cross check using previous frame
         const prev = series[targetIdx - 1];
-        if (!prev) {return false;}
+        if (!prev) {
+          return false;
+        }
         const lhsPrev = prev.values[rule.operands[0]];
         const rhsPrev =
           typeof rule.threshold === "number" ? rule.threshold : prev.values[rule.operands[1]];
-        if (lhsPrev === undefined || rhsPrev === undefined) {return false;}
+        if (lhsPrev === undefined || rhsPrev === undefined) {
+          return false;
+        }
         return rule.comparator === "crossesAbove"
           ? lhsPrev <= rhsPrev && lhs > rhs
           : lhsPrev >= rhsPrev && lhs < rhs;

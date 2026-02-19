@@ -6,7 +6,10 @@ try {
   fs.mkdirSync(OUT_DIR, { recursive: true });
 } catch {}
 
-export async function measureMs<T>(name: string, fn: () => Promise<T>): Promise<{ result: T; ms: number }> {
+export async function measureMs<T>(
+  name: string,
+  fn: () => Promise<T>,
+): Promise<{ result: T; ms: number }> {
   const start = Date.now();
   const result = await fn();
   const ms = Date.now() - start;
@@ -28,7 +31,9 @@ export function record(obj: Record<string, unknown>) {
 export function readTelemetryLines(): string[] {
   try {
     const p = path.join(OUT_DIR, "telemetry.jsonl");
-    if (!fs.existsSync(p)) return [];
+    if (!fs.existsSync(p)) {
+      return [];
+    }
     return fs.readFileSync(p, "utf8").split(/\n/).filter(Boolean);
   } catch {
     return [];

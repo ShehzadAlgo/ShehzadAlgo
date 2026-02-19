@@ -27,7 +27,9 @@ export class AnchoredVolumeProfile implements FeatureComputer {
   }
 
   async compute(bars: NormalizedBar[]): Promise<FeatureFrame[]> {
-    if (!bars.length) return [];
+    if (!bars.length) {
+      return [];
+    }
     const start = Math.max(0, bars.length - this.#anchorLookback);
     const slice = bars.slice(start);
 
@@ -56,7 +58,7 @@ export class AnchoredVolumeProfile implements FeatureComputer {
       return { lo, hi };
     });
 
-    const histogram = new Array<number>(bins).fill(0);
+    const histogram: number[] = Array.from({ length: bins }).fill(0);
 
     // Distribute each bar's volume across bins proportional to overlap
     for (const b of slice) {
@@ -70,7 +72,9 @@ export class AnchoredVolumeProfile implements FeatureComputer {
       const barLo = Math.max(b.low, min);
       const barHi = Math.min(b.high, max);
       const barRange = barHi - barLo;
-      if (barRange <= 0) continue;
+      if (barRange <= 0) {
+        continue;
+      }
 
       // For each bin that overlaps the bar, add proportional volume
       // Note: iterate bins and compute overlap; bins count is small (default 24)
@@ -107,8 +111,8 @@ export class AnchoredVolumeProfile implements FeatureComputer {
     let acc = histogram[pocIndex];
 
     while (acc < target && (left > 0 || right < bins - 1)) {
-      const leftVol = left > 0 ? histogram[left - 1] : -Infinity;
-      const rightVol = right < bins - 1 ? histogram[right + 1] : -Infinity;
+      const leftVol = (left > 0 ? histogram[left - 1] : -Infinity) as number;
+      const rightVol = (right < bins - 1 ? histogram[right + 1] : -Infinity) as number;
       if (leftVol >= rightVol) {
         left -= 1;
         acc += histogram[left];

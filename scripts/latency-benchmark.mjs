@@ -1,27 +1,37 @@
 #!/usr/bin/env node
 import { spawn } from "node:child_process";
-import { fileURLToPath } from "node:url";
-import path from "node:path";
 import fs from "node:fs";
+import path from "node:path";
+import { fileURLToPath } from "node:url";
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const repoRoot = process.cwd();
 
 // Tests to run (defaults to our new volume-profile tests)
-const tests = process.argv.slice(2).length ? process.argv.slice(2) : [
-  "src/infra/strategy/features/volume-profile.test.ts",
-  "src/infra/strategy/features/volume-profile.edge.test.ts",
-];
+const tests = process.argv.slice(2).length
+  ? process.argv.slice(2)
+  : [
+      "src/infra/strategy/features/volume-profile.test.ts",
+      "src/infra/strategy/features/volume-profile.edge.test.ts",
+    ];
 
-const thresholdMs = Number(process.env.LATENCY_THRESHOLD_MS || process.env.SHEHZADALGO_LATENCY_THRESHOLD_MS || 5000);
+const thresholdMs = Number(
+  process.env.LATENCY_THRESHOLD_MS || process.env.SHEHZADALGO_LATENCY_THRESHOLD_MS || 5000,
+);
 
 function runVitest(args) {
   return new Promise((resolve, reject) => {
     const cmd = process.platform === "win32" ? "pnpm.cmd" : "pnpm";
-    const child = spawn(cmd, ["exec", "vitest", "run", ...args], { stdio: "inherit", shell: false });
+    const child = spawn(cmd, ["exec", "vitest", "run", ...args], {
+      stdio: "inherit",
+      shell: false,
+    });
     child.on("close", (code) => {
-      if (code === 0) resolve(0);
-      else reject(new Error("vitest failed with code " + code));
+      if (code === 0) {
+        resolve(0);
+      } else {
+        reject(new Error("vitest failed with code " + code));
+      }
     });
     child.on("error", reject);
   });
@@ -57,9 +67,9 @@ function recordResult(obj) {
     const file = path.join(outDir, "latency-benchmark.jsonl");
     const line = JSON.stringify({ ts: new Date().toISOString(), ...obj }) + "\n";
     fs.appendFileSync(file, line, "utf8");
-  } catch (e) {
+  } catch {
     // ignore
   }
 }
 
-main();
+void main();
