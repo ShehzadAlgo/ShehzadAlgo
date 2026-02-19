@@ -1,4 +1,4 @@
-import OpenClawKit
+import ShehzadAlgoKit
 import SwiftUI
 import WebKit
 

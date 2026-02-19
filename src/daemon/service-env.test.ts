@@ -271,25 +271,25 @@ describe("buildServiceEnvironment", () => {
     } else {
       expect(env.PATH).toContain("/usr/bin");
     }
-    expect(env.OPENCLAW_GATEWAY_PORT).toBe("18789");
-    expect(env.OPENCLAW_GATEWAY_TOKEN).toBe("secret");
-    expect(env.OPENCLAW_SERVICE_MARKER).toBe("openclaw");
-    expect(env.OPENCLAW_SERVICE_KIND).toBe("gateway");
-    expect(typeof env.OPENCLAW_SERVICE_VERSION).toBe("string");
-    expect(env.OPENCLAW_SYSTEMD_UNIT).toBe("openclaw-gateway.service");
+    expect(env.shehzadalgo_GATEWAY_PORT).toBe("18789");
+    expect(env.shehzadalgo_GATEWAY_TOKEN).toBe("secret");
+    expect(env.shehzadalgo_SERVICE_MARKER).toBe("shehzadalgo");
+    expect(env.shehzadalgo_SERVICE_KIND).toBe("gateway");
+    expect(typeof env.shehzadalgo_SERVICE_VERSION).toBe("string");
+    expect(env.shehzadalgo_SYSTEMD_UNIT).toBe("shehzadalgo-gateway.service");
     if (process.platform === "darwin") {
-      expect(env.OPENCLAW_LAUNCHD_LABEL).toBe("ai.openclaw.gateway");
+      expect(env.shehzadalgo_LAUNCHD_LABEL).toBe("ai.shehzadalgo.gateway");
     }
   });
 
   it("uses profile-specific unit and label", () => {
     const env = buildServiceEnvironment({
-      env: { HOME: "/home/user", OPENCLAW_PROFILE: "work" },
+      env: { HOME: "/home/user", shehzadalgo_PROFILE: "work" },
       port: 18789,
     });
-    expect(env.OPENCLAW_SYSTEMD_UNIT).toBe("openclaw-gateway-work.service");
+    expect(env.shehzadalgo_SYSTEMD_UNIT).toBe("shehzadalgo-gateway-work.service");
     if (process.platform === "darwin") {
-      expect(env.OPENCLAW_LAUNCHD_LABEL).toBe("ai.openclaw.work");
+      expect(env.shehzadalgo_LAUNCHD_LABEL).toBe("ai.shehzadalgo.work");
     }
   });
 });
@@ -306,31 +306,31 @@ describe("buildNodeServiceEnvironment", () => {
 describe("resolveGatewayStateDir", () => {
   it("uses the default state dir when no overrides are set", () => {
     const env = { HOME: "/Users/test" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw"));
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".shehzadalgo"));
   });
 
   it("appends the profile suffix when set", () => {
-    const env = { HOME: "/Users/test", OPENCLAW_PROFILE: "rescue" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw-rescue"));
+    const env = { HOME: "/Users/test", shehzadalgo_PROFILE: "rescue" };
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".shehzadalgo-rescue"));
   });
 
   it("treats default profiles as the base state dir", () => {
-    const env = { HOME: "/Users/test", OPENCLAW_PROFILE: "Default" };
-    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".openclaw"));
+    const env = { HOME: "/Users/test", shehzadalgo_PROFILE: "Default" };
+    expect(resolveGatewayStateDir(env)).toBe(path.join("/Users/test", ".shehzadalgo"));
   });
 
-  it("uses OPENCLAW_STATE_DIR when provided", () => {
-    const env = { HOME: "/Users/test", OPENCLAW_STATE_DIR: "/var/lib/openclaw" };
-    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/var/lib/openclaw"));
+  it("uses shehzadalgo_STATE_DIR when provided", () => {
+    const env = { HOME: "/Users/test", shehzadalgo_STATE_DIR: "/var/lib/shehzadalgo" };
+    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/var/lib/shehzadalgo"));
   });
 
-  it("expands ~ in OPENCLAW_STATE_DIR", () => {
-    const env = { HOME: "/Users/test", OPENCLAW_STATE_DIR: "~/openclaw-state" };
-    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/Users/test/openclaw-state"));
+  it("expands ~ in shehzadalgo_STATE_DIR", () => {
+    const env = { HOME: "/Users/test", shehzadalgo_STATE_DIR: "~/shehzadalgo-state" };
+    expect(resolveGatewayStateDir(env)).toBe(path.resolve("/Users/test/shehzadalgo-state"));
   });
 
   it("preserves Windows absolute paths without HOME", () => {
-    const env = { OPENCLAW_STATE_DIR: "C:\\State\\openclaw" };
-    expect(resolveGatewayStateDir(env)).toBe("C:\\State\\openclaw");
+    const env = { shehzadalgo_STATE_DIR: "C:\\State\\shehzadalgo" };
+    expect(resolveGatewayStateDir(env)).toBe("C:\\State\\shehzadalgo");
   });
 });

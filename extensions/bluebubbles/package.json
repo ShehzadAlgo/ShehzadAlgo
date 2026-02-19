@@ -1,12 +1,12 @@
 {
-  "name": "@openclaw/bluebubbles",
+  "name": "@shehzadalgo/bluebubbles",
   "version": "2026.2.17",
-  "description": "OpenClaw BlueBubbles channel plugin",
+  "description": "ShehzadAlgo BlueBubbles channel plugin",
   "type": "module",
   "devDependencies": {
-    "openclaw": "workspace:*"
+    "shehzadalgo": "workspace:*"
   },
-  "openclaw": {
+  "shehzadalgo": {
     "extensions": [
       "./index.ts"
     ],
@@ -28,7 +28,7 @@
       "order": 75
     },
     "install": {
-      "npmSpec": "@openclaw/bluebubbles",
+      "npmSpec": "@shehzadalgo/bluebubbles",
       "localPath": "extensions/bluebubbles",
       "defaultChoice": "npm"
     }

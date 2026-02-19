@@ -1,6 +1,6 @@
-# OpenClaw (iOS)
+# ShehzadAlgo (iOS)
 
-This is an **alpha** iOS app that connects to an OpenClaw Gateway as a `role: node`.
+This is an **alpha** iOS app that connects to an ShehzadAlgo Gateway as a `role: node`.
 
 Expect rough edges:
 
@@ -21,7 +21,7 @@ If your Gateway has the `device-pair` plugin installed:
 
 1. In Telegram, message your bot: `/pair`
 2. Copy the **setup code** message
-3. On iOS: OpenClaw → Settings → Gateway → paste setup code → Connect
+3. On iOS: ShehzadAlgo → Settings → Gateway → paste setup code → Connect
 4. Back in Telegram: `/pair approve`
 
 ## Build And Run
@@ -42,13 +42,13 @@ pnpm ios:open
 `pnpm ios:open` now runs `scripts/ios-configure-signing.sh` before `xcodegen`:
 
 - If `IOS_DEVELOPMENT_TEAM` is set, it uses that team.
-- Otherwise it prefers the canonical OpenClaw team (`Y5PE65HELJ`) when that team exists locally.
+- Otherwise it prefers the canonical ShehzadAlgo team (`Y5PE65HELJ`) when that team exists locally.
 - If not present, it picks the first non-personal team from your Xcode account (falls back to personal team if needed).
 - It writes the selected team to `apps/ios/.local-signing.xcconfig` (local-only, gitignored).
 
 Then in Xcode:
 
-1. Select the `OpenClaw` scheme
+1. Select the `ShehzadAlgo` scheme
 2. Select a simulator or a connected device
 3. Run
 
@@ -65,9 +65,9 @@ pnpm ios:build
 ```bash
 cd apps/ios
 xcodegen generate
-xcodebuild test -project OpenClaw.xcodeproj -scheme OpenClaw -destination "platform=iOS Simulator,name=iPhone 17"
+xcodebuild test -project ShehzadAlgo.xcodeproj -scheme ShehzadAlgo -destination "platform=iOS Simulator,name=iPhone 17"
 ```
 
 ## Shared Code
 
-- `apps/shared/OpenClawKit` contains the shared transport/types used by the iOS app.
+- `apps/shared/ShehzadAlgoKit` contains the shared transport/types used by the iOS app.

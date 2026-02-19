@@ -5,7 +5,7 @@ import {
   readNumberParam,
   readReactionParams,
   readStringParam,
-} from "openclaw/plugin-sdk";
+} from "shehzadalgo/plugin-sdk";
 import {
   deleteMatrixMessage,
   editMatrixMessage,

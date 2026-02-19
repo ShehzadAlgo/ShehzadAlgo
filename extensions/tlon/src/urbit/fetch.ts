@@ -1,5 +1,5 @@
-import type { LookupFn, SsrFPolicy } from "openclaw/plugin-sdk";
-import { fetchWithSsrFGuard } from "openclaw/plugin-sdk";
+import type { LookupFn, SsrFPolicy } from "shehzadalgo/plugin-sdk";
+import { fetchWithSsrFGuard } from "shehzadalgo/plugin-sdk";
 import { validateUrbitBaseUrl } from "./base-url.js";
 import { UrbitUrlError } from "./errors.js";
 

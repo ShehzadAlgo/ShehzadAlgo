@@ -1,0 +1,12 @@
+│
+◇  Doctor warnings ───────────────────────────────────────────╮
+│                                                             │
+│  - State dir migration skipped: target already exists       │
+│    (/home/shehzad/.shehzadalgo). Remove or merge manually.  │
+│                                                             │
+├─────────────────────────────────────────────────────────────╯
+2026-02-18T07:14:08.174+05:00 Gateway failed to start: gateway already running (pid 93678); lock timeout after 5000ms
+If the gateway is supervised, stop it with: shehzadalgo gateway stop
+2026-02-18T07:14:08.254+05:00 Gateway service status unknown; if supervised, stop it first.
+2026-02-18T07:14:08.255+05:00 Tip: shehzadalgo gateway stop
+2026-02-18T07:14:08.256+05:00 Or: systemctl --user stop shehzadalgo-gateway.service

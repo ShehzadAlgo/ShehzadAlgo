@@ -1,0 +1,12 @@
+services:
+  gateway:
+    image: node:22-slim
+    working_dir: /app
+    volumes:
+      - .:/app
+      - ~/.shehzadalgo:/root/.shehzadalgo
+    command: sh -c "npm install && node --import tsx src/index.ts gateway --port 18888"
+    ports:
+      - "18888:18888"
+    environment:
+      - NODE_ENV=development

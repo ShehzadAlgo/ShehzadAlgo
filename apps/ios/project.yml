@@ -1,6 +1,6 @@
-name: OpenClaw
+name: ShehzadAlgo
 options:
-  bundleIdPrefix: ai.openclaw
+  bundleIdPrefix: ai.shehzadalgo
   deploymentTarget:
     iOS: "18.0"
   xcodeVersion: "16.0"
@@ -10,23 +10,23 @@ settings:
     SWIFT_VERSION: "6.0"
 
 packages:
-  OpenClawKit:
-    path: ../shared/OpenClawKit
+  ShehzadAlgoKit:
+    path: ../shared/ShehzadAlgoKit
   Swabble:
     path: ../../Swabble
 
 schemes:
-  OpenClaw:
+  ShehzadAlgo:
     shared: true
     build:
       targets:
-        OpenClaw: all
+        ShehzadAlgo: all
     test:
       targets:
-        - OpenClawTests
+        - ShehzadAlgoTests
 
 targets:
-  OpenClaw:
+  ShehzadAlgo:
     type: application
     platform: iOS
     configFiles:
@@ -35,13 +35,13 @@ targets:
     sources:
       - path: Sources
     dependencies:
-      - target: OpenClawShareExtension
+      - target: ShehzadAlgoShareExtension
         embed: true
-      - package: OpenClawKit
-      - package: OpenClawKit
-        product: OpenClawChatUI
-      - package: OpenClawKit
-        product: OpenClawProtocol
+      - package: ShehzadAlgoKit
+      - package: ShehzadAlgoKit
+        product: ShehzadAlgoChatUI
+      - package: ShehzadAlgoKit
+        product: ShehzadAlgoProtocol
       - package: Swabble
         product: SwabbleKit
       - sdk: AppIntents.framework
@@ -74,22 +74,22 @@ targets:
     settings:
       base:
         CODE_SIGN_IDENTITY: "Apple Development"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_APP_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_APP_PROFILE)"
+        CODE_SIGN_STYLE: "$(SHEHZADALGO_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(SHEHZADALGO_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(SHEHZADALGO_APP_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(SHEHZADALGO_APP_PROFILE)"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
         ENABLE_APPINTENTS_METADATA: NO
     info:
       path: Sources/Info.plist
       properties:
-        CFBundleDisplayName: OpenClaw
+        CFBundleDisplayName: ShehzadAlgo
         CFBundleIconName: AppIcon
         CFBundleURLTypes:
-          - CFBundleURLName: ai.openclaw.ios
+          - CFBundleURLName: ai.shehzadalgo.ios
             CFBundleURLSchemes:
-              - openclaw
+              - shehzadalgo
         CFBundleShortVersionString: "2026.2.17"
         CFBundleVersion: "20260217"
         UILaunchScreen: {}
@@ -97,16 +97,16 @@ targets:
           UIApplicationSupportsMultipleScenes: false
         UIBackgroundModes:
           - audio
-        NSLocalNetworkUsageDescription: OpenClaw discovers and connects to your OpenClaw gateway on the local network.
+        NSLocalNetworkUsageDescription: ShehzadAlgo discovers and connects to your ShehzadAlgo gateway on the local network.
         NSAppTransportSecurity:
           NSAllowsArbitraryLoadsInWebContent: true
         NSBonjourServices:
-          - _openclaw-gw._tcp
-        NSCameraUsageDescription: OpenClaw can capture photos or short video clips when requested via the gateway.
-        NSLocationWhenInUseUsageDescription: OpenClaw uses your location when you allow location sharing.
-        NSLocationAlwaysAndWhenInUseUsageDescription: OpenClaw can share your location in the background when you enable Always.
-        NSMicrophoneUsageDescription: OpenClaw needs microphone access for voice wake.
-        NSSpeechRecognitionUsageDescription: OpenClaw uses on-device speech recognition for voice wake.
+          - _shehzadalgo-gw._tcp
+        NSCameraUsageDescription: ShehzadAlgo can capture photos or short video clips when requested via the gateway.
+        NSLocationWhenInUseUsageDescription: ShehzadAlgo uses your location when you allow location sharing.
+        NSLocationAlwaysAndWhenInUseUsageDescription: ShehzadAlgo can share your location in the background when you enable Always.
+        NSMicrophoneUsageDescription: ShehzadAlgo needs microphone access for voice wake.
+        NSSpeechRecognitionUsageDescription: ShehzadAlgo uses on-device speech recognition for voice wake.
         UISupportedInterfaceOrientations:
           - UIInterfaceOrientationPortrait
           - UIInterfaceOrientationPortraitUpsideDown
@@ -118,7 +118,7 @@ targets:
           - UIInterfaceOrientationLandscapeLeft
           - UIInterfaceOrientationLandscapeRight
 
-  OpenClawShareExtension:
+  ShehzadAlgoShareExtension:
     type: app-extension
     platform: iOS
     configFiles:
@@ -127,39 +127,39 @@ targets:
     sources:
       - path: ShareExtension
     dependencies:
-      - package: OpenClawKit
+      - package: ShehzadAlgoKit
     settings:
       base:
         CODE_SIGN_IDENTITY: "Apple Development"
-        CODE_SIGN_STYLE: "$(OPENCLAW_CODE_SIGN_STYLE)"
-        DEVELOPMENT_TEAM: "$(OPENCLAW_DEVELOPMENT_TEAM)"
-        PRODUCT_BUNDLE_IDENTIFIER: "$(OPENCLAW_SHARE_BUNDLE_ID)"
-        PROVISIONING_PROFILE_SPECIFIER: "$(OPENCLAW_SHARE_PROFILE)"
+        CODE_SIGN_STYLE: "$(SHEHZADALGO_CODE_SIGN_STYLE)"
+        DEVELOPMENT_TEAM: "$(SHEHZADALGO_DEVELOPMENT_TEAM)"
+        PRODUCT_BUNDLE_IDENTIFIER: "$(SHEHZADALGO_SHARE_BUNDLE_ID)"
+        PROVISIONING_PROFILE_SPECIFIER: "$(SHEHZADALGO_SHARE_PROFILE)"
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
     info:
       path: ShareExtension/Info.plist
 
-  OpenClawTests:
+  ShehzadAlgoTests:
     type: bundle.unit-test
     platform: iOS
     sources:
       - path: Tests
     dependencies:
-      - target: OpenClaw
+      - target: ShehzadAlgo
       - package: Swabble
         product: SwabbleKit
       - sdk: AppIntents.framework
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: ai.openclaw.ios.tests
+        PRODUCT_BUNDLE_IDENTIFIER: ai.shehzadalgo.ios.tests
         SWIFT_VERSION: "6.0"
         SWIFT_STRICT_CONCURRENCY: complete
-        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/OpenClaw.app/OpenClaw"
+        TEST_HOST: "$(BUILT_PRODUCTS_DIR)/ShehzadAlgo.app/ShehzadAlgo"
         BUNDLE_LOADER: "$(TEST_HOST)"
     info:
       path: Tests/Info.plist
       properties:
-        CFBundleDisplayName: OpenClawTests
+        CFBundleDisplayName: ShehzadAlgoTests
         CFBundleShortVersionString: "2026.2.17"
         CFBundleVersion: "20260217"

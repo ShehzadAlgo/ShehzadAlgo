@@ -1,6 +1,6 @@
-# @openclaw/voice-call
+# @shehzadalgo/voice-call
 
-Official Voice Call plugin for **OpenClaw**.
+Official Voice Call plugin for **shehzadalgo**.
 
 Providers:
 
@@ -9,15 +9,15 @@ Providers:
 - **Plivo** (Voice API + XML transfer + GetInput speech)
 - **Mock** (dev/no network)
 
-Docs: `https://docs.openclaw.ai/plugins/voice-call`
-Plugin system: `https://docs.openclaw.ai/plugin`
+Docs: `https://docs.shehzadalgo.ai/plugins/voice-call`
+Plugin system: `https://docs.shehzadalgo.ai/plugin`
 
 ## Install (local dev)
 
-### Option A: install via OpenClaw (recommended)
+### Option A: install via shehzadalgo (recommended)
 
 ```bash
-openclaw plugins install @openclaw/voice-call
+shehzadalgo plugins install @shehzadalgo/voice-call
 ```
 
 Restart the Gateway afterwards.
@@ -25,9 +25,9 @@ Restart the Gateway afterwards.
 ### Option B: copy into your global extensions folder (dev)
 
 ```bash
-mkdir -p ~/.openclaw/extensions
-cp -R extensions/voice-call ~/.openclaw/extensions/voice-call
-cd ~/.openclaw/extensions/voice-call && pnpm install
+mkdir -p ~/.shehzadalgo/extensions
+cp -R extensions/voice-call ~/.shehzadalgo/extensions/voice-call
+cd ~/.shehzadalgo/extensions/voice-call && pnpm install
 ```
 
 ## Config
@@ -132,13 +132,13 @@ Notes:
 ## CLI
 
 ```bash
-openclaw voicecall call --to "+15555550123" --message "Hello from OpenClaw"
-openclaw voicecall continue --call-id <id> --message "Any questions?"
-openclaw voicecall speak --call-id <id> --message "One moment"
-openclaw voicecall end --call-id <id>
-openclaw voicecall status --call-id <id>
-openclaw voicecall tail
-openclaw voicecall expose --mode funnel
+shehzadalgo voicecall call --to "+15555550123" --message "Hello from shehzadalgo"
+shehzadalgo voicecall continue --call-id <id> --message "Any questions?"
+shehzadalgo voicecall speak --call-id <id> --message "One moment"
+shehzadalgo voicecall end --call-id <id>
+shehzadalgo voicecall status --call-id <id>
+shehzadalgo voicecall tail
+shehzadalgo voicecall expose --mode funnel
 ```
 
 ## Tool

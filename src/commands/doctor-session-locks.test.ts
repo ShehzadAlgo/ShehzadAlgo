@@ -17,16 +17,16 @@ describe("noteSessionLockHealth", () => {
 
   beforeEach(async () => {
     note.mockReset();
-    prevStateDir = process.env.OPENCLAW_STATE_DIR;
-    root = await fs.mkdtemp(path.join(os.tmpdir(), "openclaw-doctor-locks-"));
-    process.env.OPENCLAW_STATE_DIR = root;
+    prevStateDir = process.env.shehzadalgo_STATE_DIR;
+    root = await fs.mkdtemp(path.join(os.tmpdir(), "shehzadalgo-doctor-locks-"));
+    process.env.shehzadalgo_STATE_DIR = root;
   });
 
   afterEach(async () => {
     if (prevStateDir === undefined) {
-      delete process.env.OPENCLAW_STATE_DIR;
+      delete process.env.shehzadalgo_STATE_DIR;
     } else {
-      process.env.OPENCLAW_STATE_DIR = prevStateDir;
+      process.env.shehzadalgo_STATE_DIR = prevStateDir;
     }
     await fs.rm(root, { recursive: true, force: true });
   });

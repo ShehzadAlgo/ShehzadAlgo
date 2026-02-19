@@ -5,7 +5,7 @@ import CoreMotion
 import CryptoKit
 import EventKit
 import Foundation
-import OpenClawKit
+import ShehzadAlgoKit
 import Network
 import Observation
 import Photos
@@ -682,7 +682,7 @@ final class GatewayConnectionController {
         if manualClientId?.isEmpty == false {
             return manualClientId!
         }
-        return "openclaw-ios"
+        return "shehzadalgo-ios"
     }
 
     private func resolveManualPort(host: String, port: Int, useTLS: Bool) -> Int? {
@@ -712,29 +712,29 @@ final class GatewayConnectionController {
     }
 
     private func currentCaps() -> [String] {
-        var caps = [OpenClawCapability.canvas.rawValue, OpenClawCapability.screen.rawValue]
+        var caps = [ShehzadAlgoCapability.canvas.rawValue, ShehzadAlgoCapability.screen.rawValue]
 
         // Default-on: if the key doesn't exist yet, treat it as enabled.
         let cameraEnabled =
             UserDefaults.standard.object(forKey: "camera.enabled") == nil
                 ? true
                 : UserDefaults.standard.bool(forKey: "camera.enabled")
-        if cameraEnabled { caps.append(OpenClawCapability.camera.rawValue) }
+        if cameraEnabled { caps.append(ShehzadAlgoCapability.camera.rawValue) }
 
         let voiceWakeEnabled = UserDefaults.standard.bool(forKey: VoiceWakePreferences.enabledKey)
-        if voiceWakeEnabled { caps.append(OpenClawCapability.voiceWake.rawValue) }
+        if voiceWakeEnabled { caps.append(ShehzadAlgoCapability.voiceWake.rawValue) }
 
         let locationModeRaw = UserDefaults.standard.string(forKey: "location.enabledMode") ?? "off"
-        let locationMode = OpenClawLocationMode(rawValue: locationModeRaw) ?? .off
-        if locationMode != .off { caps.append(OpenClawCapability.location.rawValue) }
+        let locationMode = ShehzadAlgoLocationMode(rawValue: locationModeRaw) ?? .off
+        if locationMode != .off { caps.append(ShehzadAlgoCapability.location.rawValue) }
 
-        caps.append(OpenClawCapability.device.rawValue)
-        caps.append(OpenClawCapability.photos.rawValue)
-        caps.append(OpenClawCapability.contacts.rawValue)
-        caps.append(OpenClawCapability.calendar.rawValue)
-        caps.append(OpenClawCapability.reminders.rawValue)
+        caps.append(ShehzadAlgoCapability.device.rawValue)
+        caps.append(ShehzadAlgoCapability.photos.rawValue)
+        caps.append(ShehzadAlgoCapability.contacts.rawValue)
+        caps.append(ShehzadAlgoCapability.calendar.rawValue)
+        caps.append(ShehzadAlgoCapability.reminders.rawValue)
         if Self.motionAvailable() {
-            caps.append(OpenClawCapability.motion.rawValue)
+            caps.append(ShehzadAlgoCapability.motion.rawValue)
         }
 
         return caps
@@ -742,54 +742,54 @@ final class GatewayConnectionController {
 
     private func currentCommands() -> [String] {
         var commands: [String] = [
-            OpenClawCanvasCommand.present.rawValue,
-            OpenClawCanvasCommand.hide.rawValue,
-            OpenClawCanvasCommand.navigate.rawValue,
-            OpenClawCanvasCommand.evalJS.rawValue,
-            OpenClawCanvasCommand.snapshot.rawValue,
-            OpenClawCanvasA2UICommand.push.rawValue,
-            OpenClawCanvasA2UICommand.pushJSONL.rawValue,
-            OpenClawCanvasA2UICommand.reset.rawValue,
-            OpenClawScreenCommand.record.rawValue,
-            OpenClawSystemCommand.notify.rawValue,
-            OpenClawChatCommand.push.rawValue,
-            OpenClawTalkCommand.pttStart.rawValue,
-            OpenClawTalkCommand.pttStop.rawValue,
-            OpenClawTalkCommand.pttCancel.rawValue,
-            OpenClawTalkCommand.pttOnce.rawValue,
+            ShehzadAlgoCanvasCommand.present.rawValue,
+            ShehzadAlgoCanvasCommand.hide.rawValue,
+            ShehzadAlgoCanvasCommand.navigate.rawValue,
+            ShehzadAlgoCanvasCommand.evalJS.rawValue,
+            ShehzadAlgoCanvasCommand.snapshot.rawValue,
+            ShehzadAlgoCanvasA2UICommand.push.rawValue,
+            ShehzadAlgoCanvasA2UICommand.pushJSONL.rawValue,
+            ShehzadAlgoCanvasA2UICommand.reset.rawValue,
+            ShehzadAlgoScreenCommand.record.rawValue,
+            ShehzadAlgoSystemCommand.notify.rawValue,
+            ShehzadAlgoChatCommand.push.rawValue,
+            ShehzadAlgoTalkCommand.pttStart.rawValue,
+            ShehzadAlgoTalkCommand.pttStop.rawValue,
+            ShehzadAlgoTalkCommand.pttCancel.rawValue,
+            ShehzadAlgoTalkCommand.pttOnce.rawValue,
         ]
 
         let caps = Set(self.currentCaps())
-        if caps.contains(OpenClawCapability.camera.rawValue) {
-            commands.append(OpenClawCameraCommand.list.rawValue)
-            commands.append(OpenClawCameraCommand.snap.rawValue)
-            commands.append(OpenClawCameraCommand.clip.rawValue)
+        if caps.contains(ShehzadAlgoCapability.camera.rawValue) {
+            commands.append(ShehzadAlgoCameraCommand.list.rawValue)
+            commands.append(ShehzadAlgoCameraCommand.snap.rawValue)
+            commands.append(ShehzadAlgoCameraCommand.clip.rawValue)
         }
-        if caps.contains(OpenClawCapability.location.rawValue) {
-            commands.append(OpenClawLocationCommand.get.rawValue)
+        if caps.contains(ShehzadAlgoCapability.location.rawValue) {
+            commands.append(ShehzadAlgoLocationCommand.get.rawValue)
         }
-        if caps.contains(OpenClawCapability.device.rawValue) {
-            commands.append(OpenClawDeviceCommand.status.rawValue)
-            commands.append(OpenClawDeviceCommand.info.rawValue)
+        if caps.contains(ShehzadAlgoCapability.device.rawValue) {
+            commands.append(ShehzadAlgoDeviceCommand.status.rawValue)
+            commands.append(ShehzadAlgoDeviceCommand.info.rawValue)
         }
-        if caps.contains(OpenClawCapability.photos.rawValue) {
-            commands.append(OpenClawPhotosCommand.latest.rawValue)
+        if caps.contains(ShehzadAlgoCapability.photos.rawValue) {
+            commands.append(ShehzadAlgoPhotosCommand.latest.rawValue)
         }
-        if caps.contains(OpenClawCapability.contacts.rawValue) {
-            commands.append(OpenClawContactsCommand.search.rawValue)
-            commands.append(OpenClawContactsCommand.add.rawValue)
+        if caps.contains(ShehzadAlgoCapability.contacts.rawValue) {
+            commands.append(ShehzadAlgoContactsCommand.search.rawValue)
+            commands.append(ShehzadAlgoContactsCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.calendar.rawValue) {
-            commands.append(OpenClawCalendarCommand.events.rawValue)
-            commands.append(OpenClawCalendarCommand.add.rawValue)
+        if caps.contains(ShehzadAlgoCapability.calendar.rawValue) {
+            commands.append(ShehzadAlgoCalendarCommand.events.rawValue)
+            commands.append(ShehzadAlgoCalendarCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.reminders.rawValue) {
-            commands.append(OpenClawRemindersCommand.list.rawValue)
-            commands.append(OpenClawRemindersCommand.add.rawValue)
+        if caps.contains(ShehzadAlgoCapability.reminders.rawValue) {
+            commands.append(ShehzadAlgoRemindersCommand.list.rawValue)
+            commands.append(ShehzadAlgoRemindersCommand.add.rawValue)
         }
-        if caps.contains(OpenClawCapability.motion.rawValue) {
-            commands.append(OpenClawMotionCommand.activity.rawValue)
-            commands.append(OpenClawMotionCommand.pedometer.rawValue)
+        if caps.contains(ShehzadAlgoCapability.motion.rawValue) {
+            commands.append(ShehzadAlgoMotionCommand.activity.rawValue)
+            commands.append(ShehzadAlgoMotionCommand.pedometer.rawValue)
         }
 
         return commands

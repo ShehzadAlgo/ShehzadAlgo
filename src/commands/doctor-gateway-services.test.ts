@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import type { OpenClawConfig } from "../config/config.js";
+import type { ShehzadAlgoConfig } from "../config/config.js";
 
 const mocks = vi.hoisted(() => ({
   readCommand: vi.fn(),
@@ -58,9 +58,9 @@ describe("maybeRepairGatewayServiceConfig", () => {
 
   it("treats gateway.auth.token as source of truth for service token repairs", async () => {
     mocks.readCommand.mockResolvedValue({
-      programArguments: ["/usr/bin/node", "/usr/local/bin/openclaw", "gateway", "--port", "18789"],
+      programArguments: ["/usr/bin/node", "/usr/local/bin/shehzadalgo", "gateway", "--port", "18789"],
       environment: {
-        OPENCLAW_GATEWAY_TOKEN: "stale-token",
+        shehzadalgo_GATEWAY_TOKEN: "stale-token",
       },
     });
     mocks.auditGatewayServiceConfig.mockResolvedValue({
@@ -68,21 +68,21 @@ describe("maybeRepairGatewayServiceConfig", () => {
       issues: [
         {
           code: "gateway-token-mismatch",
-          message: "Gateway service OPENCLAW_GATEWAY_TOKEN does not match gateway.auth.token",
+          message: "Gateway service shehzadalgo_GATEWAY_TOKEN does not match gateway.auth.token",
           level: "recommended",
         },
       ],
     });
     mocks.buildGatewayInstallPlan.mockResolvedValue({
-      programArguments: ["/usr/bin/node", "/usr/local/bin/openclaw", "gateway", "--port", "18789"],
+      programArguments: ["/usr/bin/node", "/usr/local/bin/shehzadalgo", "gateway", "--port", "18789"],
       workingDirectory: "/tmp",
       environment: {
-        OPENCLAW_GATEWAY_TOKEN: "config-token",
+        shehzadalgo_GATEWAY_TOKEN: "config-token",
       },
     });
     mocks.install.mockResolvedValue(undefined);
 
-    const cfg: OpenClawConfig = {
+    const cfg: ShehzadAlgoConfig = {
       gateway: {
         auth: {
           mode: "token",
@@ -119,20 +119,20 @@ describe("maybeRepairGatewayServiceConfig", () => {
     expect(mocks.install).toHaveBeenCalledTimes(1);
   });
 
-  it("uses OPENCLAW_GATEWAY_TOKEN when config token is missing", async () => {
-    const previousToken = process.env.OPENCLAW_GATEWAY_TOKEN;
-    process.env.OPENCLAW_GATEWAY_TOKEN = "env-token";
+  it("uses shehzadalgo_GATEWAY_TOKEN when config token is missing", async () => {
+    const previousToken = process.env.shehzadalgo_GATEWAY_TOKEN;
+    process.env.shehzadalgo_GATEWAY_TOKEN = "env-token";
     try {
       mocks.readCommand.mockResolvedValue({
         programArguments: [
           "/usr/bin/node",
-          "/usr/local/bin/openclaw",
+          "/usr/local/bin/shehzadalgo",
           "gateway",
           "--port",
           "18789",
         ],
         environment: {
-          OPENCLAW_GATEWAY_TOKEN: "stale-token",
+          shehzadalgo_GATEWAY_TOKEN: "stale-token",
         },
       });
       mocks.auditGatewayServiceConfig.mockResolvedValue({
@@ -140,7 +140,7 @@ describe("maybeRepairGatewayServiceConfig", () => {
         issues: [
           {
             code: "gateway-token-mismatch",
-            message: "Gateway service OPENCLAW_GATEWAY_TOKEN does not match gateway.auth.token",
+            message: "Gateway service shehzadalgo_GATEWAY_TOKEN does not match gateway.auth.token",
             level: "recommended",
           },
         ],
@@ -148,19 +148,19 @@ describe("maybeRepairGatewayServiceConfig", () => {
       mocks.buildGatewayInstallPlan.mockResolvedValue({
         programArguments: [
           "/usr/bin/node",
-          "/usr/local/bin/openclaw",
+          "/usr/local/bin/shehzadalgo",
           "gateway",
           "--port",
           "18789",
         ],
         workingDirectory: "/tmp",
         environment: {
-          OPENCLAW_GATEWAY_TOKEN: "env-token",
+          shehzadalgo_GATEWAY_TOKEN: "env-token",
         },
       });
       mocks.install.mockResolvedValue(undefined);
 
-      const cfg: OpenClawConfig = {
+      const cfg: ShehzadAlgoConfig = {
         gateway: {},
       };
 
@@ -192,9 +192,9 @@ describe("maybeRepairGatewayServiceConfig", () => {
       expect(mocks.install).toHaveBeenCalledTimes(1);
     } finally {
       if (previousToken === undefined) {
-        delete process.env.OPENCLAW_GATEWAY_TOKEN;
+        delete process.env.shehzadalgo_GATEWAY_TOKEN;
       } else {
-        process.env.OPENCLAW_GATEWAY_TOKEN = previousToken;
+        process.env.shehzadalgo_GATEWAY_TOKEN = previousToken;
       }
     }
   });

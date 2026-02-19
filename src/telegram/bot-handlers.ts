@@ -54,6 +54,9 @@ import {
 } from "./model-buttons.js";
 import { buildInlineKeyboard } from "./send.js";
 import { wasSentByBot } from "./sent-message-cache.js";
+import { strategyWatch } from "../commands/strategy.js";
+import { globalAlertRules, type Comparator } from "../infra/strategy/alert-rules.js";
+import { resolveVenueForSymbol } from "../infra/strategy/symbol-router.js";
 
 export const registerTelegramHandlers = ({
   cfg,
@@ -130,6 +133,104 @@ export const registerTelegramHandlers = ({
         : async () => ({});
     return { message, me: ctx.me, getFile };
   };
+
+  // Casual intent parser similar to WhatsApp auto-reply.
+  const parseCasualIntent = (text: string) => {
+    const lower = text.toLowerCase();
+    if (/\bmarket update\b/.test(lower)) {return { kind: "market-update" as const };}
+    const priceMatch = lower.match(/\b([a-z]{2,10}[/]?[a-z]{0,5})\b/);
+    if (priceMatch && ["btc","eth","sol","xrp","xau","gold","eurusd","gbpusd"].includes(priceMatch[1].replace("/","").slice(0,6))) {
+      return { kind: "price", symbol: priceMatch[1] };
+    }
+    const threshold = lower.match(/([a-z]{2,10}[/]?[a-z]{0,5})\\s*(>=|<=|>|<|==|=)\\s*([\\d.]+)/i);
+    if (threshold) {
+      return {
+        kind: "threshold",
+        symbol: threshold[1],
+        comparator: threshold[2] as Comparator,
+        value: Number(threshold[3]),
+      };
+    }
+    if (lower.includes("watch") || lower.includes("alert")) {
+      const sym = priceMatch?.[1] ?? "btc";
+      return { kind: "watch", symbol: sym };
+    }
+    return null;
+  };
+
+  const normalizeSymbol = (raw: string): string => {
+    const clean = raw.replace("/", "").toUpperCase();
+    if (clean.length <= 5 && !clean.endsWith("USD") && !clean.endsWith("USDT")) {
+      return `${clean}USD`;
+    }
+    return clean;
+  };
+
+  const fetchBinancePrice = async (symbol: string): Promise<string | null> => {
+    try {
+      const pair =
+        symbol.endsWith("USDT") || symbol.endsWith("BUSD") || symbol.endsWith("USD")
+          ? symbol
+          : `${symbol}USDT`;
+      const res = await fetch(`https://api.binance.com/api/v3/ticker/price?symbol=${pair}`);
+      if (!res.ok) {return null;}
+      const data = (await res.json()) as { price: string };
+      return `${pair}: ${Number(data.price).toFixed(4)}`;
+    } catch {
+      return null;
+    }
+  };
+
+  bot.use(async (ctx, next) => {
+    const text = ctx.message?.text;
+    if (!text || wasSentByBot(ctx.chat?.id ?? "", ctx.message?.message_id ?? 0)) {
+      return next();
+    }
+    const intent = parseCasualIntent(text);
+    if (!intent) {
+      return next();
+    }
+    if (intent.kind === "market-update" || intent.kind === "price") {
+      const symbol = (intent as any).symbol ?? "BTC";
+      const norm = normalizeSymbol(symbol);
+      const price = await fetchBinancePrice(norm);
+      await ctx.reply(price ?? `Data for ${norm} not available yet.`, { reply_to_message_id: ctx.msg?.message_id });
+      return;
+    }
+    if (intent.kind === "watch") {
+      const symbol = normalizeSymbol((intent as any).symbol ?? "BTC");
+      const venue = resolveVenueForSymbol(symbol);
+      await strategyWatch({
+        symbol,
+        timeframes: ["1m", "5m", "15m"],
+        venue,
+        alertTargets: [{ channel: "telegram", chatId: String(ctx.chat?.id ?? "") }],
+      });
+      await ctx.reply(`Watching ${symbol} (1m/5m/15m, venue: ${venue}). Alerts will arrive here.`, {
+        reply_to_message_id: ctx.msg?.message_id,
+      });
+      return;
+    }
+    if (intent.kind === "threshold") {
+      const symbol = normalizeSymbol((intent as any).symbol ?? "BTC");
+      const venue = resolveVenueForSymbol(symbol);
+      const ruleId = `tg:${ctx.chat?.id}:${Date.now()}`;
+      globalAlertRules.register({
+        id: ruleId,
+        symbol,
+        comparator: (intent as any).comparator,
+        value: Number((intent as any).value),
+        timeframe: "1m",
+        alertTargets: [{ channel: "telegram", chatId: String(ctx.chat?.id ?? "") }],
+      });
+      await ctx.reply(
+        `Alert set: ${symbol} ${(intent as any).comparator} ${(intent as any).value} (1m, venue: ${venue}, one-shot).`,
+        { reply_to_message_id: ctx.msg?.message_id },
+      );
+      return;
+    }
+    return next();
+  });
   const inboundDebouncer = createInboundDebouncer<TelegramDebounceEntry>({
     debounceMs,
     buildKey: (entry) => entry.debounceKey,
