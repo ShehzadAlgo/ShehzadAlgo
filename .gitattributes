@@ -1,1 +1,2 @@
 * text=auto eol=lf
+.serena/cache/typescript/document_symbols.pkl filter=lfs diff=lfs merge=lfs -text
